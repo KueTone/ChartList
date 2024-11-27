@@ -1,2 +1,2 @@
 # ChartList
-Craiglist Clone
+Craigslist Clone
