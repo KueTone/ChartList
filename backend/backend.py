@@ -9,6 +9,13 @@ import os
 import shutil
 import uvicorn
 
+DB_CONFIG = {
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "host": os.getenv("DB_HOST"),
+    "database": os.getenv("DB_NAME"),
+}
+
 load_dotenv()
 
 app = FastAPI()
@@ -49,6 +56,7 @@ def main():
         host=HOST,
         port=PORT,
         log_level="info",
+        
     )
 
 
