@@ -25,10 +25,8 @@ Make a .env file. this will hold your important stuff
     DB_USER=root
     DB_PASSWORD=your-password
     DB_HOST=127.0.0.1
-    DB_NAME=classified_listings
+    DB_NAME=craigslist
 
-    // For Next.js
-    NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
 
 
 git:
