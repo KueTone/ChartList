@@ -17,6 +17,10 @@ Run in backend folder
 
 Make a .env file. this will hold your important stuff
 ### making .env
+    HOST=0.0.0.0
+    PORT=4000
+    LOCATION=us-central1
+
     //For FastAPI
     DB_USER=root
     DB_PASSWORD=your-password
