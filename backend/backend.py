@@ -2,12 +2,15 @@
 from dotenv import load_dotenv
 import googleapiclient
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import shutil
 import uvicorn
+import mysql.connector
+from mysql.connector import Error
 
 DB_CONFIG = {
     "user": os.getenv("DB_USER"),
@@ -31,6 +34,16 @@ app.add_middleware(
     allow_methods=["*"],    # Specify allowed HTTP methods (or use wildcard "*")
     allow_headers=["*"],    # Specify allowed HTTP headers (or use wildcard "*")
 )
+
+# Utility function to get database connection
+def get_db_connection():
+    try:
+        conn = connect(**DB_CONFIG)
+        if conn.is_connected():
+            return conn
+    except Error as e:
+        print(f"Error connecting to database: {e}")
+        raise HTTPException(status_code=500, detail="Database connection failed.")
 
 
 @app.get("/")
