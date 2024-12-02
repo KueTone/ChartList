@@ -38,6 +38,10 @@ then run this command:
 ```
 export GOOGLE_APPLICATION_CREDENTIALS="/absolute/path/to/your-service-account-key.json"
 ```
+If you are using windows powershell:
+```
+$env:GOOGLE_APPLICATION_CREDENTIALS="\abolutepathtoyourserviceaccountkey.json"
+```
 
 ### Start servers
 ```
