@@ -25,35 +25,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Database configuration
-DB_CONFIG = {
-    "user": os.getenv("DB_USER"),
-    "password": os.getenv("DB_PASSWORD"),
-    "host": os.getenv("DB_HOST"),
-    "database": os.getenv("DB_NAME"),
-}
-
-# Utility function to get database connection
-def get_db_connection():
-    try:
-        conn = connect(**DB_CONFIG)
-        if conn.is_connected():
-            return conn
-    except Error as e:
-        print(f"Error connecting to database: {e}")
-        raise HTTPException(status_code=500, detail="Database connection failed.")
-
-# Query BigQuery
-def query_block_value():
-    client = bigquery.Client()
-    query = """
-    SELECT *
-    FROM `bigquery-public-data.us_res_real_est_data.block_value`
-    LIMIT 10
-    """
-    query_job = client.query(query)
-    return [dict(row) for row in query_job]
-
 # Routes
 @app.get("/")
 async def api_entry():
@@ -65,7 +36,7 @@ async def upload_csv(file: UploadFile = File(...)):
 
 @app.get("/block-values")
 def get_block_values():
-    data = query_block_value()
+    data = query.query_block_value()
     return {"block_values": data}
 
 # Main function
