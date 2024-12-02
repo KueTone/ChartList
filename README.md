@@ -20,7 +20,7 @@ Run in backend folder
 ```python backend.py```
 
 Make a .env file. this will hold your important stuff
-### making .env
+### Create .env file in backend
 ```
 HOST=127.0.0.1
 PORT=8000
@@ -34,11 +34,11 @@ DB_NAME=craigslist
 ```
 ### export Credentials
 In the terminal rooted in your backend, download your Google JSON credentials file and place it there
-then run this command:
+#### Run this command if Mac Terminal:
 ```
 export GOOGLE_APPLICATION_CREDENTIALS="/absolute/path/to/your-service-account-key.json"
 ```
-If you are using windows powershell:
+#### If you are using windows powershell:
 ```
 $env:GOOGLE_APPLICATION_CREDENTIALS="\abolutepathtoyourserviceaccountkey.json"
 ```
