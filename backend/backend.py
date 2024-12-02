@@ -7,6 +7,7 @@ import os
 import uvicorn
 from google.cloud import bigquery
 from mysql.connector import connect, Error
+import query #databse connection
 
 # Load environment variables
 load_dotenv()
@@ -56,7 +57,7 @@ def query_block_value():
 # Routes
 @app.get("/")
 async def api_entry():
-    return {"Welcome": "AutomatedCaller API"}
+    return {"Welcome": "Database API"}
 
 @app.post("/upload-csv/")
 async def upload_csv(file: UploadFile = File(...)):
