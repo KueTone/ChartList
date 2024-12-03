@@ -100,4 +100,53 @@ def query_property_type_comparison():
     query_job = client.query(query)
     return [dict(row) for row in query_job]
 
+# Function for Price Distribution for Different Property Types in Each State
+def query_property_type_comparison():
+    client = bigquery.Client()
+    query = """
+    WITH FilteredData AS (
+        SELECT 
+            state_name, 
+            property_type, 
+            price_aprox_usd
+        FROM `bigquery-public-data.properati_properties_br.properties_rent_201802`
+        WHERE surface_covered_in_m2 > 0
+    )
+    SELECT 
+        state_name, 
+        property_type, 
+        MIN(price_aprox_usd) AS min_price, 
+        MAX(price_aprox_usd) AS max_price, 
+        AVG(price_aprox_usd) AS avg_price
+    FROM FilteredData
+    GROUP BY state_name, property_type
+    ORDER BY state_name;
+    """
+    query_job = client.query(query)
+    return [dict(row) for row in query_job]
 
+def query_cheapest_areas():
+    client = bigquery.Client()
+    query = """
+    WITH filtered_data AS (
+        SELECT 
+            country_name, 
+            state_name, 
+            price_aprox_usd / surface_covered_in_m2 AS price_per_m2,
+            property_type
+        FROM `bigquery-public-data.properati_properties_br.properties_rent_201802`
+        WHERE surface_covered_in_m2 > 0
+    )
+
+    SELECT 
+        country_name, 
+        state_name, 
+        AVG(price_per_m2) AS avg_price_per_m2,
+        property_type
+    FROM filtered_data
+    GROUP BY country_name, state_name, property_type
+    ORDER BY avg_price_per_m2 ASC
+    LIMIT 50;
+    """
+    query_job = client.query(query)
+    return [dict(row) for row in query_job]
