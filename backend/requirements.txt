@@ -6,3 +6,4 @@ google-api-python-client==2.126.0
 google-cloud-bigquery==3.27.0
 pandas==2.2.2
 pydantic==2.7.0
+mysql-connector-python==9.1.0 
