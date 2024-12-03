@@ -101,7 +101,7 @@ def query_property_type_comparison():
     return [dict(row) for row in query_job]
 
 # Function for Price Distribution for Different Property Types in Each State
-def query_property_type_comparison():
+def query_price_distribution_comparison():
     client = bigquery.Client()
     query = """
     WITH FilteredData AS (
@@ -125,6 +125,7 @@ def query_property_type_comparison():
     query_job = client.query(query)
     return [dict(row) for row in query_job]
 
+# Function for Cheapest Areas Based on Price per Square Meter
 def query_cheapest_areas():
     client = bigquery.Client()
     query = """
