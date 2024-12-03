@@ -26,7 +26,9 @@ LIMIT 10;
 ```
 
 **Optimized Version:**
+
 ```sql
+<<<<<<< HEAD
 SELECT 
     place_name, 
     AVG(avg_price) AS avg_price, 
@@ -61,6 +63,23 @@ GROUP BY
 ORDER BY 
     avg_price ASC
 LIMIT 10;
+=======
+WITH pre_filtered_data AS (
+  SELECT 
+    property_type,
+    state_name
+  FROM `bigquery-public-data.properati_properties_br.properties_rent_201802`
+  WHERE surface_covered_in_m2 > 0
+)
+
+SELECT 
+  property_type,
+  state_name,
+  COUNT(*) AS property_count
+FROM pre_filtered_data
+GROUP BY property_type, state_name
+ORDER BY property_type, property_count DESC;
+>>>>>>> 036f7e2e6088813c00b6679252975ec5983a4edf
 
 ```
 
@@ -70,22 +89,27 @@ The non-optimized version uses a subquery that combines two separate data source
 ### 2. Property Type Comparison
 
 **Non-Optimized Version:**
+    Direct filtering in the main query:
+    If surface_covered_in_m2 > 0 applies to a large dataset, the filtering is done repeatedly and inefficiently during query execution.
+    No use of pre-filtering or partitions:
+    Query directly works on the entire dataset without reducing the scope early
 ```sql
 SELECT 
-    property_type,
-    AVG(price) AS avg_price,
-    COUNT(*) AS number_of_listings
-FROM 
-    (SELECT property_type, price FROM `bigquery-public-data.properati_properties_br.properties_sell_201801`
-     UNION ALL
-     SELECT property_type, price FROM `bigquery-public-data.properati_properties_br.properties_sell_201802`) AS all_properties
-GROUP BY 
-    property_type
-ORDER BY 
-    avg_price DESC;
+  property_type,
+  state_name,
+  COUNT(*) AS property_count
+FROM `bigquery-public-data.properati_properties_br.properties_rent_201802`
+WHERE surface_covered_in_m2 > 0
+GROUP BY property_type, state_name
+ORDER BY property_type, property_count DESC;
+
 ```
 
 **Optimized Version:**
+    Pre-filtering:
+    Moves filtering into a separate step, improving performance by focusing only on relevant data for grouping and counting.
+    Simplified operations:
+    Operates on the smaller pre_filtered_data, which is faster for grouping and sorting
 ```sql
 SELECT 
     property_type,
@@ -151,8 +175,51 @@ GROUP BY
 ORDER BY 
     year, month;
 ```
+### 4. Cheapest Areas Based on Price per Square Meter
 
+**Non-Optimized Version:**
 **Explanation:**
+Division in AVG():Its  performing the division inside the aggregation, which may not be as efficient as doing it after filtering.
+
+```sql
+SELECT 
+  country_name, 
+  state_name, 
+  AVG(price_aprox_usd / surface_covered_in_m2) AS avg_price_per_m2,
+  property_type
+FROM `bigquery-public-data.properati_properties_br.properties_rent_201802`
+WHERE surface_covered_in_m2 > 0
+GROUP BY country_name, state_name, property_type
+ORDER BY avg_price_per_m2 ASC
+LIMIT 50;
+
+```
+**Optimized Version:**
+**Explanation:**
+Using a WITH clause (CTE): This simplifies the calculation of price_per_m2 before performing aggregation, ensuring the computation is done once and not repeatedly during the AVG() operation.
+Pre-filtering data: By filtering surface_covered_in_m2 > 0 in the CTE, the number of rows processed during the aggregation is reduced, improving performance.
+```sql
+WITH filtered_data AS (
+  SELECT 
+    country_name, 
+    state_name, 
+    price_aprox_usd / surface_covered_in_m2 AS price_per_m2,
+    property_type
+  FROM `bigquery-public-data.properati_properties_br.properties_rent_201802`
+  WHERE surface_covered_in_m2 > 0
+)
+
+SELECT 
+  country_name, 
+  state_name, 
+  AVG(price_per_m2) AS avg_price_per_m2,
+  property_type
+FROM filtered_data
+GROUP BY country_name, state_name, property_type
+ORDER BY avg_price_per_m2 ASC
+LIMIT 50;
+
+```
 The non-optimized version processes the data using a subquery, which can be slower due to the need to materialize the intermediate result. The optimized version runs the extraction and aggregation separately for each table, allowing for more efficient parallel processing and better use of database indexing.
 
 ---
