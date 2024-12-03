@@ -68,6 +68,7 @@ LIMIT 10;
 **Explanation:** 
 The non-optimized version uses a subquery that combines two separate data sources using `UNION ALL` and filters the result using a `WHERE` clause. The optimized version performs the filtering and grouping operation separately for each data source before combining the results, which reduces the amount of data processed at each step and can improve performance.
 
+![Query 1 Output](images/Qq1.png)
 ### 2. Property Type Comparison
 
 **Non-Optimized Version:**
@@ -117,6 +118,8 @@ ORDER BY
 **Explanation:**
 The non-optimized version aggregates the data from both tables using a subquery, which can be slower for large datasets. The optimized version executes the aggregation independently for each table and then combines the results, making it easier for the database engine to execute and cache intermediate results efficiently.
 
+![Query 1 Output](images/Q2.png)
+
 ### 3. Price Distribution for Different Property Types in Each State
 To look at how prices are distributed for different property types (house vs apartment) in each state. This will give insights into price ranges
 
@@ -159,6 +162,7 @@ GROUP BY state_name, property_type
 ORDER BY state_name;
 
 ```
+![Query 1 Output](images/Q3.png)
 ### 4. Cheapest Areas Based on Price per Square Meter
 
 **Non-Optimized Version:**
@@ -204,11 +208,11 @@ ORDER BY avg_price_per_m2 ASC
 LIMIT 50;
 
 ```
-The non-optimized version processes the data using a subquery, which can be slower due to the need to materialize the intermediate result. The optimized version runs the extraction and aggregation separately for each table, allowing for more efficient parallel processing and better use of database indexing.
+![Query 1 Output](images/Q4.png)
 
 ---
 
 ## Conclusion
 
-The optimized versions of the SQL queries are designed to execute faster and handle large datasets more efficiently. They avoid complex subqueries and instead leverage separate aggregations for each data source, which allows for better performance and scalability.
+The optimized versions of the SQL queries are designed to execute faster and handle large datasets more efficiently. They avoid complex subqueries and instead leverage separate aggregations for each data source, which allows for better performance and scalability. The non-optimized version processes the data using a subquery, which can be slower due to the need to materialize the intermediate result. The optimized version runs the extraction and aggregation separately for each table, allowing for more efficient parallel processing and better use of database indexing.
 
