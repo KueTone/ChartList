@@ -1,0 +1,31 @@
+.sidebar {
+    position: relative;
+    top: 0;
+    right: 0;
+    width: 250px;
+    height: 100%;
+    background-color: transparent;
+    color: black;
+    padding: 20px;
+    margin: 20px;
+    float: left;
+    box-sizing: border-box;
+}
+
+
+.sidebar .sidebar-content button {
+    display: block;
+    padding: 25px;
+    width: 150%;
+    margin-bottom: 25%;
+    background-color: #431c52;
+    color: bisque;
+    border-radius: 5px;
+    cursor: pointer;
+    align-items: center;
+}
+
+.sidebar .sidebar-content button:hover {
+    background-color: #623c74;
+    color: burlywood;
+}

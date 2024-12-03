@@ -1,23 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { fetchBlockValues } from "./services/api";
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './components/home';
+import TopAffordablePlaces from './components/TopAffordablePlaces';
+// import PropertyTypeComparison from './components/PropertyTypeComparison';
+// import PriceDistributionComparison from './components/PriceDistributionComparison';
+// import CheapestAreas from './components/CheapestAreas';
 
 function App() {
-    const [blockValues, setBlockValues] = useState([]);
-
-    useEffect(() => {
-        fetchBlockValues().then(setBlockValues);
-    }, []);
-
-    return (
-        <div>
-            <h1>Block Values</h1>
-            <ul>
-                {blockValues.map((block, index) => (
-                    <li key={index}>{JSON.stringify(block)}</li>
-                ))}
-            </ul>
-        </div>
-    );
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/top-affordable-places" element={<TopAffordablePlaces />} />
+        </Routes>
+    </Router>
+  );
 }
 
 export default App;
