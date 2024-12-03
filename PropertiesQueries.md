@@ -4,7 +4,7 @@ This document provides an overview of different SQL queries used for analyzing r
 
 ## Query Analysis
 
-### 1. Top Affordable Areas
+### 1. Top Affordable Areas To Rent
 
 **Non-Optimized Version:**
 ```sql
@@ -28,7 +28,6 @@ LIMIT 10;
 **Optimized Version:**
 
 ```sql
-<<<<<<< HEAD
 SELECT 
     place_name, 
     AVG(avg_price) AS avg_price, 
@@ -63,23 +62,6 @@ GROUP BY
 ORDER BY 
     avg_price ASC
 LIMIT 10;
-=======
-WITH pre_filtered_data AS (
-  SELECT 
-    property_type,
-    state_name
-  FROM `bigquery-public-data.properati_properties_br.properties_rent_201802`
-  WHERE surface_covered_in_m2 > 0
-)
-
-SELECT 
-  property_type,
-  state_name,
-  COUNT(*) AS property_count
-FROM pre_filtered_data
-GROUP BY property_type, state_name
-ORDER BY property_type, property_count DESC;
->>>>>>> 036f7e2e6088813c00b6679252975ec5983a4edf
 
 ```
 
