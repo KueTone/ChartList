@@ -27,30 +27,41 @@ LIMIT 10;
 
 **Optimized Version:**
 ```sql
-SELECT  
-    place_name,
-    AVG(price) AS avg_price,
-    COUNT(*) AS number_of_listings
-FROM 
-    `bigquery-public-data.properati_properties_br.properties_rent_201801`
-WHERE 
-    price IS NOT NULL
-GROUP BY 
-    place_name
-UNION ALL
-SELECT  
-    place_name,
-    AVG(price) AS avg_price,
-    COUNT(*) AS number_of_listings
-FROM 
-    `bigquery-public-data.properati_properties_br.properties_rent_201802`
-WHERE 
-    price IS NOT NULL
+SELECT 
+    place_name, 
+    AVG(avg_price) AS avg_price, 
+    SUM(number_of_listings) AS total_listings
+FROM (
+    SELECT  
+        place_name,
+        AVG(price) AS avg_price,
+        COUNT(*) AS number_of_listings
+    FROM 
+        `bigquery-public-data.properati_properties_br.properties_rent_201801`
+    WHERE 
+        price IS NOT NULL
+    GROUP BY 
+        place_name
+    
+    UNION ALL
+    
+    SELECT  
+        place_name,
+        AVG(price) AS avg_price,
+        COUNT(*) AS number_of_listings
+    FROM 
+        `bigquery-public-data.properati_properties_br.properties_rent_201802`
+    WHERE 
+        price IS NOT NULL
+    GROUP BY 
+        place_name
+) AS top_areas
 GROUP BY 
     place_name
 ORDER BY 
     avg_price ASC
 LIMIT 10;
+
 ```
 
 **Explanation:** 
