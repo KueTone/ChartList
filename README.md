@@ -2,7 +2,7 @@
 
 # ChartList  
 **A Craigslist Clone**
-
+Please see PropertiesQueries.md for information about the queries and their descriptions and results.
 
 ## Backend Setup  
 
