@@ -39,6 +39,11 @@ def get_block_values():
     data = query.query_block_value()
     return {"block_values": data}
 
+@app.get("/average-values")
+def get_block_values():
+    data = query.query_average_value()
+    return {"Average values": data}
+
 # Main function
 def main():
     try:

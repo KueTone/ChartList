@@ -30,3 +30,36 @@ def query_block_value():
     """
     query_job = client.query(query)
     return [dict(row) for row in query_job]
+
+
+# Query BigQuery
+def query_block_value():
+    client = bigquery.Client()
+    query = """
+    SELECT *
+    FROM `bigquery-public-data.us_res_real_est_data.block_value`
+    LIMIT 10
+    """
+    query_job = client.query(query)
+    return [dict(row) for row in query_job]
+
+# Query to get average value by state, zip code, and property type DONES NOT WORK
+def query_average_value():
+    client = bigquery.Client()
+    query = """
+    SELECT 
+        state AS State, 
+        zip AS Zip_Code, 
+        property_type AS Property_Type, 
+        AVG(value_50) AS Average_Value
+    FROM 
+        `bigquery-public-data.us_res_real_est_data.block_value`
+    WHERE 
+        value_50 IS NOT NULL
+    GROUP BY 
+        state, zip, property_type
+    ORDER BY 
+        Average_Value DESC
+    """
+    query_job = client.query(query)
+    return [dict(row) for row in query_job]
