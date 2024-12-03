@@ -50,5 +50,5 @@ python backend.py
 cd ..
 cd frontend
 npm install
-npm run dev
+npm start
 ```
