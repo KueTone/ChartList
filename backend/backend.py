@@ -30,10 +30,6 @@ app.add_middleware(
 async def api_entry():
     return {"Welcome": "Database API"}
 
-@app.post("/upload-csv/")
-async def upload_csv(file: UploadFile = File(...)):
-    return {"Function": "Function"}
-
 @app.get("/block-values")
 def get_block_values():
     data = query.query_block_value()
