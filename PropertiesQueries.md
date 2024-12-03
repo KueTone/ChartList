@@ -28,6 +28,42 @@ LIMIT 10;
 **Optimized Version:**
 
 ```sql
+<<<<<<< HEAD
+SELECT 
+    place_name, 
+    AVG(avg_price) AS avg_price, 
+    SUM(number_of_listings) AS total_listings
+FROM (
+    SELECT  
+        place_name,
+        AVG(price) AS avg_price,
+        COUNT(*) AS number_of_listings
+    FROM 
+        `bigquery-public-data.properati_properties_br.properties_rent_201801`
+    WHERE 
+        price IS NOT NULL
+    GROUP BY 
+        place_name
+    
+    UNION ALL
+    
+    SELECT  
+        place_name,
+        AVG(price) AS avg_price,
+        COUNT(*) AS number_of_listings
+    FROM 
+        `bigquery-public-data.properati_properties_br.properties_rent_201802`
+    WHERE 
+        price IS NOT NULL
+    GROUP BY 
+        place_name
+) AS top_areas
+GROUP BY 
+    place_name
+ORDER BY 
+    avg_price ASC
+LIMIT 10;
+=======
 WITH pre_filtered_data AS (
   SELECT 
     property_type,
@@ -43,6 +79,7 @@ SELECT
 FROM pre_filtered_data
 GROUP BY property_type, state_name
 ORDER BY property_type, property_count DESC;
+>>>>>>> 036f7e2e6088813c00b6679252975ec5983a4edf
 
 ```
 
