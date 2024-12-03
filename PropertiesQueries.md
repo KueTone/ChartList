@@ -98,45 +98,47 @@ ORDER BY
 **Explanation:**
 The non-optimized version aggregates the data from both tables using a subquery, which can be slower for large datasets. The optimized version executes the aggregation independently for each table and then combines the results, making it easier for the database engine to execute and cache intermediate results efficiently.
 
-### 3. Rental Price Trends
+### 3. Price Distribution for Different Property Types in Each State
+To look at how prices are distributed for different property types (house vs apartment) in each state. This will give insights into price ranges
 
 **Non-Optimized Version:**
+    This version does not make use of aliases or efficient filtering, and processes the data without further optimizations like partitioning or clustering
 ```sql
 SELECT 
-    EXTRACT(YEAR FROM created_on) AS year,
-    EXTRACT(MONTH FROM created_on) AS month,
-    AVG(price) AS avg_price
-FROM 
-    (SELECT created_on, price FROM `bigquery-public-data.properati_properties_br.properties_sell_201801`
-     UNION ALL
-     SELECT created_on, price FROM `bigquery-public-data.properati_properties_br.properties_sell_201802`) AS all_properties
-GROUP BY 
-    year, month
-ORDER BY 
-    year, month;
+  state_name, 
+  property_type, 
+  MIN(price_aprox_usd) AS min_price, 
+  MAX(price_aprox_usd) AS max_price, 
+  AVG(price_aprox_usd) AS avg_price
+FROM `bigquery-public-data.properati_properties_br.properties_rent_201802`
+WHERE surface_covered_in_m2 > 0
+GROUP BY state_name, property_type
+ORDER BY state_name;
+
 ```
 
 **Optimized Version:**
+Filter Early: In the optimized version, irrelevant rows are filtered using a CTE before applying aggregations, reducing the number of rows to process
+By reducing data early and reusing filtered data, the query processes fewer rows, improving speed and efficiency
 ```sql
+WITH FilteredData AS (
+  SELECT 
+    state_name, 
+    property_type, 
+    price_aprox_usd
+  FROM `bigquery-public-data.properati_properties_br.properties_rent_201802`
+  WHERE surface_covered_in_m2 > 0
+)
 SELECT 
-    EXTRACT(YEAR FROM created_on) AS year,
-    EXTRACT(MONTH FROM created_on) AS month,
-    AVG(price) AS avg_price
-FROM 
-    `bigquery-public-data.properati_properties_br.properties_sell_201801`
-GROUP BY 
-    year, month
-UNION ALL
-SELECT 
-    EXTRACT(YEAR FROM created_on) AS year,
-    EXTRACT(MONTH FROM created_on) AS month,
-    AVG(price) AS avg_price
-FROM 
-    `bigquery-public-data.properati_properties_br.properties_sell_201802`
-GROUP BY 
-    year, month
-ORDER BY 
-    year, month;
+  state_name, 
+  property_type, 
+  MIN(price_aprox_usd) AS min_price, 
+  MAX(price_aprox_usd) AS max_price, 
+  AVG(price_aprox_usd) AS avg_price
+FROM FilteredData
+GROUP BY state_name, property_type
+ORDER BY state_name;
+
 ```
 ### 4. Cheapest Areas Based on Price per Square Meter
 
@@ -159,8 +161,8 @@ LIMIT 50;
 ```
 **Optimized Version:**
 **Explanation:**
-Using a WITH clause (CTE): This simplifies the calculation of price_per_m2 before performing aggregation, ensuring the computation is done once and not repeatedly during the AVG() operation.
-Pre-filtering data: By filtering surface_covered_in_m2 > 0 in the CTE, the number of rows processed during the aggregation is reduced, improving performance.
+Using a WITH clause: This simplifies the calculation of price_per_m2 before performing aggregation, ensuring the computation is done once and not repeatedly during the AVG() operation.
+Pre-filtering data: By filtering surface_covered_in_m2 > 0, the number of rows processed during the aggregation is reduced, improving performance.
 ```sql
 WITH filtered_data AS (
   SELECT 
